@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pitch Arena: Yakinkan Investor</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#d9f3ec;--ink:#14213d;--card:#ffffff;--coral:#ff5a5f;--sun:#ffd23f;--teal:#1fb5a8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f2a30;--ink:#f2fff9;--card:#17383f}}
+:root[data-theme="dark"]{--bg:#0f2a30;--ink:#f2fff9;--card:#17383f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;min-height:100vh}
+h1,h2{font-family:"Lilita One","Trebuchet MS",sans-serif;font-weight:400;letter-spacing:.3px;margin:.2em 0}
+h1{font-size:34px}h2{font-size:26px}
+#app{max-width:640px;margin:0 auto;padding:14px}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-weight:800}
+.meter{flex:1;height:22px;border:3px solid var(--ink);border-radius:12px;background:var(--card);overflow:hidden}
+#fill{height:100%;width:30%;background:linear-gradient(90deg,var(--coral),var(--sun),var(--teal));transition:width .4s}
+.card{background:var(--card);border:3px solid var(--ink);border-radius:16px;box-shadow:6px 6px 0 var(--ink);padding:18px}
+p{line-height:1.5}
+.tag{display:inline-block;background:var(--sun);color:#14213d;border:2px solid var(--ink);border-radius:8px;padding:2px 10px;font-weight:800;font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.g4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.ch,.go{font:inherit;font-weight:800;color:#14213d;background:var(--sun);border:3px solid var(--ink);border-radius:12px;padding:10px;text-align:left;box-shadow:3px 3px 0 var(--ink);cursor:pointer}
+.ch small{display:block;font-weight:500;font-size:12px;margin-top:2px;opacity:.85}
+.ch:active,.go:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.go{background:var(--coral);color:#fff;width:100%;text-align:center;font-size:18px;margin-top:14px;padding:14px}
+.ch[disabled]{opacity:.4;box-shadow:none}
+.cS{background:#7be0a8}.cW{background:#ffb199}.cO{background:#8fd3ff}.cT{background:#d9b3ff}
+.placed{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.placed .ch{background:var(--teal);box-shadow:none;padding:4px 8px;font-size:12px;cursor:default}
+.hint{animation:pulse .7s infinite alternate}
+@keyframes pulse{to{transform:scale(1.04);background:#fff}}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.bubble{display:flex;gap:12px;align-items:flex-start;margin-top:12px}
+.av{font-size:44px;line-height:1}
+.say{flex:1;border:3px solid var(--ink);border-radius:14px;padding:10px 12px;background:var(--bg);font-weight:700;line-height:1.45}
+.opt{display:block;width:100%;margin-top:10px;font:inherit;text-align:left;background:var(--card);color:var(--ink);border:3px solid var(--ink);border-radius:12px;padding:12px;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+.good{color:#0e8a4f}.bad{color:var(--coral)}
+input{font:inherit;width:100%;padding:12px;border:3px solid var(--ink);border-radius:12px;background:var(--bg);color:var(--ink);margin-top:10px}
+.tb{height:16px;border:3px solid var(--ink);border-radius:8px;overflow:hidden;margin-top:16px;background:var(--bg)}.tb div{height:100%;background:var(--coral);animation-name:drain;animation-timing-function:linear;animation-fill-mode:forwards}@keyframes drain{from{width:100%}to{width:0}}
+@media (prefers-reduced-motion:reduce){.hint,.shake{animation:none}}
+</style></head><body>
+<div id="app">
+<div class="bar"><span>🦈 Kepercayaan</span><div class="meter"><div id="fill"></div></div><span id="tv">30</span></div>
+<div class="card" id="main"></div></div>
+<script>
+const $=id=>document.getElementById(id);
+const SEC=[['Halaman judul','nama usaha dan logo'],['Ringkasan eksekutif','inti seluruh proposal'],['Latar belakang','alasan usaha dibuat'],['Profil usaha','visi misi dan tim'],['Deskripsi produk','keunggulan produk'],['Analisis pasar dan SWOT','pembeli, pesaing, kondisi usaha'],['Rencana pemasaran','cara menjual dan promosi'],['Rencana produksi','bahan, alat, langkah'],['Rencana keuangan','kebutuhan modal dan dana'],['Penutup','kesimpulan dan ajakan']];
+const NM={S:'Kekuatan',W:'Kelemahan',O:'Peluang',T:'Ancaman'};
+const SW=[['Minyak jelantah sebagai bahan baku murah dan mudah didapat.','S'],['Kelompok kami belum punya pengalaman berjualan.','W'],['Makin banyak orang peduli produk ramah lingkungan.','O'],['Sabun merek besar dijual murah di banyak tempat.','T'],['Ada anggota tim jago desain kemasan dari jurusan DKV.','S'],['Modal awal kami masih terbatas.','W'],['Sekolah mengadakan bazar setiap bulan.','O'],['Harga bahan baku bisa naik sewaktu-waktu.','T'],['Anggota tim kompak dan rajin membagi tugas.','S'],['Tren belanja online memudahkan promosi lewat media sosial.','O']];
+const IN=[['Siapa sebenarnya target pembeli kalian?',[['Semua orang di dunia, pasti laku.',-5,'Terlalu luas. Target pasar harus spesifik supaya strategi jualnya jelas.'],['Ibu rumah tangga dan pemilik warung makan di sekitar sekolah kami.',6,'Tepat. Target yang spesifik membuat promosi dan produksi lebih terarah.'],['Belum kami pikirkan, lihat nanti saja.',-5,'Analisis pasar harus ada sebelum usaha dijalankan.']]],
+['Proposal kalian menulis untung pasti besar tanpa risiko. Benarkah?',[['Ya, usaha kami pasti untung tanpa risiko.',-5,'Janji berlebihan membuat investor curiga. Proposal harus realistis.'],['Itu keliru. Kami revisi dan tulis risikonya beserta cara mengatasinya.',6,'Jujur dan realistis. SWOT membantu menuliskan risiko.'],['Pokoknya percaya saja pada kami.',-3,'Investor butuh dasar yang jelas, bukan sekadar diminta percaya.']]],
+['Apa bedanya sabun kalian dari merek besar?',[['Sama saja, tapi kami lebih baru.',-5,'Tanpa keunggulan, pembeli tidak punya alasan memilih kalian.'],['Bahan ramah lingkungan, kemasan desain sendiri, dan harga ramah pelajar.',6,'Keunggulan jelas. Ini isi bagian deskripsi produk.'],['Kami belum tahu siapa pesaing kami.',-3,'Mengenali pesaing adalah bagian analisis pasar.']]],
+['Siapa yang bertanggung jawab atas produksi dan pemasaran?',[['Semua mengerjakan semuanya.',-3,'Tanpa pembagian tugas, tim mudah berantakan.'],['CEO memimpin, lalu Manajer Produksi, Pemasaran, dan Keuangan menulis bagiannya masing-masing.',6,'Pembagian tugas yang jelas tertulis di profil usaha.'],['Tergantung siapa yang sempat.',-5,'Usaha butuh tanggung jawab yang jelas.']]],
+['Proposal kalian tebal sekali. Saya hanya punya satu menit.',[['Silakan baca semuanya dulu.',-3,'Investor sibuk. Kamu berisiko kehilangan perhatiannya.'],['Silakan baca ringkasan eksekutif di halaman depan, isinya inti seluruh proposal.',6,'Tepat. Ringkasan eksekutif dibuat untuk pembaca yang terburu-buru.'],['Kami potong separuh isi proposal sekarang.',-5,'Isi penting bisa hilang. Cukup buat ringkasan.']]],
+['Siapa pesaing kalian, dan kenapa pembeli harus memilih kalian?',[['Kami tidak punya pesaing.',-5,'Hampir semua usaha punya pesaing. Mengabaikannya berbahaya.'],['Pesaing kami sabun merek besar. Kami unggul di bahan ramah lingkungan dan harga pelajar.',6,'Tepat. Menyebut pesaing dan keunggulan sendiri ada di analisis pasar.'],['Pesaing kami jelek semua.',-3,'Menjelekkan pesaing tidak meyakinkan. Fokus pada keunggulan sendiri.']]],
+['Apa dasar kalian yakin produk ini akan laku?',[['Perasaan kami bilang pasti laku.',-5,'Perasaan bukan dasar. Investor butuh bukti.'],['Kami survei singkat ke calon pembeli dan sudah uji coba produknya.',6,'Tepat. Survei dan uji coba adalah dasar yang bisa dipertanggungjawabkan.'],['Pokoknya produk kami bagus.',-3,'Menilai produk sendiri tanpa data tidak meyakinkan.']]],
+['Proposal kalian banyak salah ketik dan tampilannya berantakan.',[['Isinya yang penting, tampilan tidak usah dipikirkan.',-5,'Kerapian menunjukkan keseriusan. Cek ulang sebelum dikumpulkan.'],['Terima kasih masukannya. Kami cek ulang dan rapikan sebelum dikumpulkan.',6,'Tepat. Menerima masukan dan memperbaiki menunjukkan sikap profesional.'],['Itu salah komputernya.',-3,'Menyalahkan alat tidak membuat investor yakin.']]],
+['Apa kelemahan usaha kalian?',[['Tidak ada kelemahan sama sekali.',-5,'Tidak ada usaha tanpa kelemahan. Jawaban ini terdengar tidak jujur.'],['Modal kami terbatas, jadi kami mulai dari produksi kecil dan menambah bertahap.',6,'Tepat. Kelemahan ditulis jujur disertai cara mengatasinya.'],['Itu rahasia perusahaan.',-3,'Kelemahan yang ditutupi justru menimbulkan curiga.']]],
+['Ceritakan usaha kalian dalam satu menit.',[['Kami bacakan seluruh proposal dari halaman pertama.',-3,'Terlalu panjang. Presentasi harus langsung ke inti.'],['Masalahnya apa, produk kami apa, target pembelinya siapa, dan keunggulannya apa.',6,'Tepat. Singkat, runtut, dan percaya diri.'],['Hmm... eh... apa ya...',-5,'Siapkan dan latih presentasi sebelum tampil.']]]];
+const LEARN=20,CD=[[['Urutan 1: Halaman judul','Berisi nama usaha, logo, nama kelompok, dan kelas.'],['Urutan 2: Ringkasan eksekutif','Rangkuman seluruh proposal dalam 1 halaman. Letaknya di depan, tetapi ditulis paling akhir.'],['Urutan 3: Latar belakang','Menjelaskan alasan atau masalah yang membuat usaha ini perlu dibuat.'],['Urutan 4: Profil usaha','Berisi nama usaha, visi misi, dan tim beserta pembagian tugasnya.'],['Urutan 5: Deskripsi produk','Menjelaskan produknya, keunggulannya, dan bedanya dengan produk lain.'],['Urutan 6: Analisis pasar dan SWOT','Membahas target pembeli, pesaing, serta kekuatan, kelemahan, peluang, dan ancaman.'],['Urutan 7: Rencana pemasaran','Menjelaskan cara menjual dan cara promosi.'],['Urutan 8: Rencana produksi','Menjelaskan bahan, alat, dan langkah membuat produk.'],['Urutan 9: Rencana keuangan','Menjelaskan perkiraan kebutuhan modal dan sumber dana.'],['Urutan 10: Penutup','Berisi kesimpulan dan ajakan untuk mendukung usaha.']],
+[['SWOT','Alat untuk membaca kondisi usaha. Singkatan dari Strength, Weakness, Opportunity, Threat.'],['S = Strength (kekuatan)','Hal baik dari dalam usaha. Contoh: bahan murah dan ramah lingkungan.'],['W = Weakness (kelemahan)','Hal kurang dari dalam usaha. Contoh: belum punya pengalaman berjualan.'],['O = Opportunity (peluang)','Hal baik dari luar usaha. Contoh: banyak orang mulai suka produk ramah lingkungan.'],['T = Threat (ancaman)','Hal yang bisa menyulitkan dari luar usaha. Contoh: banyak sabun merek besar dengan harga murah.'],['Internal dan eksternal','Strength dan Weakness itu internal (dari dalam). Opportunity dan Threat itu eksternal (dari luar).'],['Gunanya SWOT','Untuk menyusun strategi: pakai kekuatan, ambil peluang, perbaiki kelemahan, siap hadapi ancaman.']],
+[['Target pembeli','Tulis target yang spesifik. Jangan menjawab semua orang.'],['Realistis','Jangan janji untung pasti tanpa risiko. Tulis risikonya.'],['Keunggulan produk','Jelaskan apa bedanya produk kita dari produk lain.'],['Pembagian tugas','Perjelas peran: CEO memimpin, setiap manajer bertanggung jawab pada bagiannya.'],['Ringkasan eksekutif','Satu halaman untuk pembaca yang sibuk. Isinya inti seluruh proposal.'],['Kenali pesaing','Sebutkan siapa pesaingnya dan apa keunggulan kita dibanding mereka.'],['Punya dasar','Jawab dengan bukti, misalnya survei singkat dan uji coba produk.'],['Rapi dan teliti','Cek ulang ejaan dan tampilan. Terima masukan dengan baik.'],['Jujur soal kelemahan','Akui kelemahan dan sampaikan cara mengatasinya.'],['Presentasi singkat','Langsung ke inti: masalah, produk, target, keunggulan. Bicara percaya diri.']]];
+let SQ,IQ,LT;
+let T=30,miss=[0,0,0],team='Usaha Kami',o1,n1,n2,n3,cur,nm=0;
+const sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
+function setT(d){T=Math.max(0,Math.min(100,T+d));$('fill').style.width=T+'%';$('tv').textContent=T}
+function fx(e,c){e.classList.add(c);setTimeout(()=>e.classList.remove(c),400)}
+const M=h=>$('main').innerHTML=h;
+function start(){T=30;miss=[0,0,0];setT(0);M(`<span class="tag">Kelas XI · Proposal Usaha</span><h1>Pitch Arena</h1><p>Kamu dan timmu akan presentasi di depan investor. Naikkan tingkat <b>kepercayaan</b> mereka lewat 3 ronde. Jawaban salah menurunkannya.</p><input id="tn" maxlength="24" placeholder="Nama usaha kelompokmu" autocomplete="off"><button class="go" onclick="team=($('tn').value.trim()||'Usaha Kami');intro(1)">Masuk arena</button>`)}
+const BR=[['Susun proposalmu','Investor menerima 10 bagian proposal yang acak. Ketuk sesuai urutan yang benar dari halaman pertama sampai terakhir.'],['Analisis SWOT','Investor membaca kondisi usaha sabun cuci piring kalian. Tentukan tiap pernyataan: Kekuatan, Kelemahan, Peluang, atau Ancaman.'],['Rapat investor','Investor akan bertanya langsung. Pilih jawaban yang paling meyakinkan dan realistis.']];
+function intro(r){if(r==4)return end();M(`<span class="tag">Ronde ${r} dari 3</span><h2>${BR[r-1][0]}</h2><p>${BR[r-1][1]}</p><p><b>Tahap 1:</b> hafalkan ${CD[r-1].length} kartu. Tiap kartu muncul ${LEARN} detik lalu berganti sendiri. <b>Tahap 2:</b> jawab soal tanpa melihat kartu.</p><button class="go" onclick="learn(${r})">Mulai hafalan</button>`)}
+function learn(r,i=0){const L=CD[r-1];if(i>=L.length)return M(`<span class="tag">Hafalan selesai</span><h2>Kartu disembunyikan</h2><p>Saatnya soal. Jawab dari ingatanmu.</p><button class="go" onclick="r${r}()">Mulai soal</button>`);const c=L[i];let s=LEARN;M(`<span class="tag">Kartu hafalan ${i+1} dari ${L.length} · <span id="cd">${s}</span> detik</span><h2>${c[0]}</h2><p style="font-size:20px">${c[1]}</p><div class="tb"><div style="animation-duration:${LEARN}s"></div></div>`);clearInterval(LT);LT=setInterval(()=>{s--;const e=$('cd');if(e)e.textContent=s;if(s<=0){clearInterval(LT);learn(r,i+1)}},1000)}
+function r1(){o1=sh(SEC.map((s,i)=>i));n1=0;pg1()}
+function pg1(){M(`<span class="tag">Ronde 1 dari 3</span><h2>Cari bagian nomor ${n1+1}</h2><div class="placed">${SEC.slice(0,n1).map((s,i)=>`<span class="ch">${i+1}. ${s[0]}</span>`).join('')}</div><div class="grid">${o1.filter(i=>i>=n1).map(i=>`<button class="ch" data-i="${i}" onclick="p1(${i},this)">${SEC[i][0]}<small>${SEC[i][1]}</small></button>`).join('')}</div>`)}
+function p1(i,b){if(i==n1){n1++;setT(1);if(n1==10)return setTimeout(()=>intro(2),300);pg1()}else{miss[0]++;setT(-3);fx(b,'shake');if(miss[0]%3==0){const h=document.querySelector('[data-i="'+n1+'"]');if(h)h.classList.add('hint')}}}
+function r2(){n2=0;SQ=sh(SW);pg2()}
+function pg2(){const q=SQ[n2];M(`<span class="tag">Ronde 2 · ${n2+1} dari ${SW.length}</span><div class="bubble"><div class="av">🧑‍💼</div><div class="say">${q[0]}</div></div><div class="g4">${['S','W','O','T'].map(k=>`<button class="ch c${k}" onclick="p2('${k}',this)">${k}<small>${NM[k]}</small></button>`).join('')}</div><p><small>Petunjuk: kekuatan dan kelemahan datang dari dalam usaha, peluang dan ancaman dari luar.</small></p>`)}
+function p2(k,b){if(k==SQ[n2][1]){setT(2);n2++;if(n2>=SQ.length)return intro(3);pg2()}else{miss[1]++;setT(-3);fx(b,'shake');b.disabled=true}}
+function r3(){n3=0;IQ=sh(IN);pg3()}
+function pg3(){const q=IQ[n3];cur=sh(q[1]);M(`<span class="tag">Ronde 3 · ${n3+1} dari ${IN.length}</span><div class="bubble"><div class="av">🦈</div><div class="say">${q[0]}</div></div>${cur.map((a,j)=>`<button class="opt" onclick="p3(${j})">${a[0]}</button>`).join('')}`)}
+function p3(j){const a=cur[j];setT(a[1]>0?4:a[1]);if(a[1]<=0)miss[2]++;M(`<span class="tag">${a[1]>0?'Investor terkesan':'Investor ragu'}</span><div class="bubble"><div class="av">${a[1]>0?'😮':'🤨'}</div><div class="say"><div>${a[0]}</div><p class="${a[1]>0?'good':'bad'}">${a[2]}</p></div></div><button class="go" onclick="n3++;n3>=IN.length?intro(4):pg3()">Lanjut</button>`)}
+function end(){const v=T>=85?['🏆','Didanai penuh!','Investor langsung setuju mendanai '+team+'.']:T>=60?['🤝','Didanai dengan syarat','Investor tertarik pada '+team+', tapi minta beberapa bagian diperbaiki.']:['📝','Revisi dulu','Investor belum yakin pada '+team+'. Perbaiki proposal lalu pitch lagi.'];const N=['susunan bagian proposal','analisis SWOT','jawaban saat ditanya investor'];const w=Math.max(...miss);const weak=w==0?'Tidak ada. Hafalanmu kuat.':'Ulangi materi: '+N[miss.indexOf(w)]+'.';M(`<div style="font-size:54px">${v[0]}</div><h2>${v[1]}</h2><p>${v[2]}</p><p><b>Kepercayaan investor: ${T}/100</b><br>Salah di ronde 1: ${miss[0]} · ronde 2: ${miss[1]} · ronde 3: ${miss[2]}<br>${weak}</p><button class="go" onclick="start()">Main lagi</button>`)}
+start();
+</script></body></html>
